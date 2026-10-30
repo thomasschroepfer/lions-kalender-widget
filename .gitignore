@@ -1,0 +1,7 @@
+# Unverschlüsselte Bilder und Schlüssel dürfen NIE ins Repo
+input/
+output/
+.door-key
+dist/
+.DS_Store
+.playwright-mcp/

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Adventskalender Gewinne</title>
+<style>
+  /* Hintergrund ist transparent, damit der Wix-Hintergrund durchscheint.
+     Textfarbe: Standard dunkel (für helle Wix-Hintergründe), mit ?text=hell weiß. */
+  :root {
+    --ink: #0b2a7a;
+    --muted: #4d5b85;
+    --gold: #f2b705;
+    --gold-ink: #071d58;
+    --placeholder: rgba(11, 42, 122, 0.08);
+    --radius: 12px;
+  }
+  :root.light-text {
+    --ink: #ffffff;
+    --muted: rgba(255, 255, 255, 0.78);
+    --placeholder: rgba(255, 255, 255, 0.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: transparent; }
+  body {
+    color: var(--ink);
+    font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 632px; margin: 0 auto; padding: 16px; }
+
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .head h1 { white-space: nowrap; font-size: 1.35rem; margin: 0; font-weight: 700; letter-spacing: -0.01em; }
+  .head .date { color: var(--muted); font-size: 0.92rem; white-space: nowrap; }
+  .chip {
+    display: inline-block; vertical-align: 0.15em; margin-left: 8px;
+    padding: 2px 9px; border-radius: 999px;
+    background: var(--gold); color: var(--gold-ink);
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+
+  .stage { position: relative; width: 100%; max-width: 600px; }
+  .stage a { display: block; border-radius: var(--radius); overflow: hidden; background: var(--placeholder); }
+  .stage img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+  .nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%; border: 0;
+    background: rgba(7, 29, 88, 0.72); color: #fff; cursor: pointer;
+    display: grid; place-items: center;
+    transition: background .15s, opacity .15s;
+  }
+  .nav:hover { background: rgba(7, 29, 88, 0.92); }
+  .nav:disabled { opacity: 0; pointer-events: none; }
+  .nav.prev { left: 10px; }
+  .nav.next { right: 10px; }
+  .nav svg { width: 18px; height: 18px; }
+
+  .grid-label { margin: 16px 0 8px; color: var(--muted); font-size: 0.85rem; }
+  .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; max-width: 600px; }
+  @media (max-width: 480px) { .grid { grid-template-columns: repeat(6, 1fr); gap: 6px; } }
+
+  .thumb {
+    position: relative; padding: 0; border: 0; background: none; cursor: pointer;
+    border-radius: 8px; outline: 2px solid transparent; outline-offset: 2px;
+    transition: outline-color .15s;
+  }
+  .thumb img {
+    display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px;
+    background: var(--placeholder); opacity: .8; transition: opacity .15s;
+  }
+  .thumb:hover img, .thumb[aria-current="true"] img { opacity: 1; }
+  .thumb[aria-current="true"] { outline-color: var(--ink); }
+  .thumb.today { outline-color: var(--gold); }
+  .thumb.today[aria-current="true"] { outline-width: 3px; }
+  .thumb:focus-visible { outline-color: var(--ink); }
+
+  .empty { text-align: center; padding: 48px 16px 56px; }
+  .tag {
+    width: 92px; height: 120px; margin: 0 auto 24px; border-radius: 10px 10px 14px 14px;
+    background: var(--gold); color: var(--gold-ink); position: relative; transform: rotate(-8deg);
+    display: grid; place-items: end center; padding-bottom: 18px; font-size: 2.6rem; font-weight: 300;
+  }
+  .tag::before {
+    content: ""; position: absolute; top: 14px; left: 50%; width: 22px; height: 22px; margin-left: -11px;
+    border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px var(--gold-ink) inset;
+  }
+  .empty h1 { font-size: 1.4rem; margin: 0 0 8px; }
+  .empty p { color: var(--muted); margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+<script>
+  if (new URLSearchParams(location.search).get('text') === 'hell') document.documentElement.classList.add('light-text');
+</script>
+</head>
+<body>
+<main class="wrap" id="app"></main>
+<script>
+const DATA = /*DATA*/null;
+
+const app = document.getElementById('app');
+const pad = n => String(n).padStart(2, '0');
+const src = (d, thumb) => `doors/${pad(d)}${thumb ? '-thumb' : ''}.jpg`;
+const dateLabel = d => new Date(DATA.year, 11, d).toLocaleDateString('de-DE', { weekday: innerWidth < 480 ? 'short' : 'long', day: 'numeric', month: 'long' });
+const icon = dir => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="${dir < 0 ? 'M15 18l-6-6 6-6' : 'M9 18l6-6-6-6'}"/></svg>`;
+
+if (!DATA || DATA.released < 1) {
+  app.innerHTML = `
+    <div class="empty">
+      <div class="tag">1</div>
+      <h1>Bald geht's los!</h1>
+      <p>Ab dem 1. Dezember findest du hier jeden Tag das aktuelle Gewinnertürchen.</p>
+    </div>`;
+} else {
+  const last = DATA.released;
+  let current = last;
+
+  app.innerHTML = `
+    <div class="head">
+      <h1 id="title"></h1>
+      <div class="date" id="date"></div>
+    </div>
+    <div class="stage">
+      <a id="link" target="_blank" rel="noopener"><img id="main" alt=""></a>
+      <button class="nav prev" id="prev" aria-label="Vorheriges Türchen">${icon(-1)}</button>
+      <button class="nav next" id="next" aria-label="Nächstes Türchen">${icon(1)}</button>
+    </div>
+    ${last > 1 ? `<div class="grid-label">Bisher geöffnete Türchen</div><div class="grid" id="grid"></div>` : ''}`;
+
+  const grid = document.getElementById('grid');
+  if (grid) {
+    for (let d = 1; d <= last; d++) {
+      const b = document.createElement('button');
+      b.className = 'thumb' + (DATA.isToday && d === last ? ' today' : '');
+      b.dataset.day = d;
+      b.innerHTML = `<img src="${src(d, true)}" alt="">`;
+      b.setAttribute('aria-label', `Türchen ${d}`);
+      b.onclick = () => show(d);
+      grid.append(b);
+    }
+  }
+
+  function show(d) {
+    current = d;
+    const today = DATA.isToday && d === last;
+    document.getElementById('title').innerHTML = `Türchen ${d}${today ? '<span class="chip">Heute</span>' : ''}`;
+    document.getElementById('date').textContent = dateLabel(d);
+    const img = document.getElementById('main');
+    img.src = src(d);
+    img.alt = `Türchen ${d}: Gewinne und Gewinner-Kalendernummern`;
+    document.getElementById('link').href = src(d);
+    document.getElementById('prev').disabled = d <= 1;
+    document.getElementById('next').disabled = d >= last;
+    grid?.querySelectorAll('.thumb').forEach(t => t.setAttribute('aria-current', String(+t.dataset.day === d)));
+    [d - 1, d + 1].filter(n => n >= 1 && n <= last).forEach(n => { new Image().src = src(n); });
+  }
+
+  document.getElementById('prev').onclick = () => show(Math.max(1, current - 1));
+  document.getElementById('next').onclick = () => show(Math.min(last, current + 1));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') show(Math.max(1, current - 1));
+    if (e.key === 'ArrowRight') show(Math.min(last, current + 1));
+  });
+  show(last);
+}
+</script>
+</body>
+</html>
