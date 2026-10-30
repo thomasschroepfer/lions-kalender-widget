@@ -31,7 +31,9 @@ if (now.y > cfg.year || (now.y === cfg.year && now.m === 12)) {
 }
 const isToday = now.y === cfg.year && now.m === 12 && now.d === released;
 
-const key = released > 0 ? loadKey() : null;
+// Schlüssel immer prüfen, damit ein falsches Secret schon vor dem 1. Dezember auffällt
+const key = loadKey();
+decrypt(key, readFileSync(join(ROOT, 'encrypted', '01-thumb.jpg.enc')));
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(join(dist, 'doors'), { recursive: true });
 
