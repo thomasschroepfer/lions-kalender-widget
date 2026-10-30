@@ -14,12 +14,14 @@
     --gold: #f2b705;
     --gold-ink: #071d58;
     --placeholder: rgba(11, 42, 122, 0.08);
+    --frame: rgba(11, 42, 122, 0.18);
     --radius: 12px;
   }
   :root.light-text {
     --ink: #ffffff;
     --muted: rgba(255, 255, 255, 0.78);
     --placeholder: rgba(255, 255, 255, 0.12);
+    --frame: rgba(255, 255, 255, 0.7);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: transparent; }
@@ -41,7 +43,10 @@
   }
 
   .stage { position: relative; width: 100%; max-width: 600px; }
-  .stage a { display: block; border-radius: var(--radius); overflow: hidden; background: var(--placeholder); }
+  .frame {
+    border-radius: var(--radius); overflow: hidden; background: var(--placeholder);
+    border: 3px solid var(--frame); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+  }
   .stage img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
   .nav {
     position: absolute; top: 50%; transform: translateY(-50%);
@@ -129,7 +134,7 @@ if (!DATA || DATA.released < 1) {
       <div class="date" id="date"></div>
     </div>
     <div class="stage">
-      <a id="link" target="_blank" rel="noopener"><img id="main" alt=""></a>
+      <div class="frame"><img id="main" alt=""></div>
       <button class="nav prev" id="prev" aria-label="Vorheriges Türchen">${icon(-1)}</button>
       <button class="nav next" id="next" aria-label="Nächstes Türchen">${icon(1)}</button>
     </div>
@@ -156,7 +161,6 @@ if (!DATA || DATA.released < 1) {
     const img = document.getElementById('main');
     img.src = src(d);
     img.alt = `Türchen ${d}: Gewinne und Gewinner-Kalendernummern`;
-    document.getElementById('link').href = src(d);
     document.getElementById('prev').disabled = d <= 1;
     document.getElementById('next').disabled = d >= last;
     grid?.querySelectorAll('.thumb').forEach(t => t.setAttribute('aria-current', String(+t.dataset.day === d)));

@@ -30,7 +30,7 @@ und hebt das heutige hervor.
 5. Repo → *Actions* → „Kalender veröffentlichen“ → *Run workflow*.
    Danach ist die Seite unter `https://<user>.github.io/<repo>/` erreichbar (HTTPS).
 6. In Wix: *Hinzufügen → Einbetten → Website einbetten*, die URL eintragen.
-   - Desktop: **632 × 930 px** (Bild 600 × 600 + Rand + 3 Reihen Thumbnails am 24.12.)
+   - Desktop: **632 × 940 px** (Bild 600 × 600 mit Rahmen + 3 Reihen Thumbnails am 24.12.; mit Testansicht-Banner ca. 980 px)
    - Mobil: Breite voll, Höhe ca. **720 px**
    - Der Hintergrund ist transparent. Die Schrift ist standardmäßig dunkelblau (für helle
      Hintergründe). Auf dunklem Hintergrund `?text=hell` an die URL hängen, z. B.
