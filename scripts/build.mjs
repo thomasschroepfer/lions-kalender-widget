@@ -10,18 +10,25 @@ import { ROOT, loadKey, decrypt } from './lib.mjs';
 const cfg = JSON.parse(readFileSync(join(ROOT, 'config.json'), 'utf8'));
 const dist = join(ROOT, 'dist');
 
+const fromDate = str => { const [y, m, d] = str.split('-').map(Number); return { y, m, d, h: 12 }; };
+let simulated = false;
+
 function berlinNow() {
   const i = process.argv.indexOf('--date');
-  if (i > 0) {
-    const [y, m, d] = process.argv[i + 1].split('-').map(Number);
-    return { y, m, d, h: 12 };
-  }
+  if (i > 0) return fromDate(process.argv[i + 1]);
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat('en-CA', {
       timeZone: cfg.timeZone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', hourCycle: 'h23',
     }).formatToParts(new Date()).map(p => [p.type, Number(p.value)]),
   );
-  return { y: parts.year, m: parts.month, d: parts.day, h: parts.hour };
+  const real = { y: parts.year, m: parts.month, d: parts.day, h: parts.hour };
+  // Testansicht aus config.json – greift nur bis 29.11., danach zählt immer das echte Datum
+  const beforeSafety = real.y < cfg.year || (real.y === cfg.year && (real.m < 11 || (real.m === 11 && real.d < 30)));
+  if (cfg.simulateDate && beforeSafety) {
+    simulated = true;
+    return fromDate(cfg.simulateDate);
+  }
+  return real;
 }
 
 const now = berlinNow();
@@ -45,9 +52,9 @@ for (let day = 1; day <= released; day++) {
   }
 }
 
-const data = { year: cfg.year, title: cfg.title, released, isToday, built: new Date().toISOString() };
+const data = { year: cfg.year, title: cfg.title, released, isToday, simulated, built: new Date().toISOString() };
 const html = readFileSync(join(ROOT, 'site/index.html'), 'utf8').replace('/*DATA*/null', JSON.stringify(data));
 writeFileSync(join(dist, 'index.html'), html);
 writeFileSync(join(dist, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
 
-console.log(`Berlin ${now.y}-${now.m}-${now.d} ${now.h}h → ${released} Türchen veröffentlicht`);
+console.log(`${simulated ? 'TESTANSICHT ' : ''}Berlin ${now.y}-${now.m}-${now.d} ${now.h}h → ${released} Türchen veröffentlicht`);

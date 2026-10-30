@@ -44,3 +44,12 @@ for (const [day, name] of [...doors].sort((a, b) => a[0] - b[0])) {
 }
 rmSync(tmp, { recursive: true, force: true });
 console.log(`\n${doors.size} Türchen verschlüsselt nach ${outDir}`);
+
+// Neue (echte) Bilder → Testansicht sicherheitshalber abschalten
+const cfgFile = join(ROOT, 'config.json');
+const cfg = JSON.parse(readFileSync(cfgFile, 'utf8'));
+if (cfg.simulateDate) {
+  delete cfg.simulateDate;
+  writeFileSync(cfgFile, JSON.stringify(cfg, null, 2) + '\n');
+  console.log('Testansicht (simulateDate) in config.json abgeschaltet.');
+}

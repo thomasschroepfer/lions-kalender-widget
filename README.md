@@ -55,6 +55,9 @@ python3 -m http.server -d dist 8000   # → http://localhost:8000
 ## Einstellungen (`config.json`)
 
 - `year`: Kalenderjahr
+- `simulateDate`: **Testansicht**, z. B. `"2026-12-24"`. Zeigt die Türchen bis zu diesem Tag mit rotem
+  „Testansicht“-Banner. Wirkt nur bis 29.11. und wird von `prepare.mjs` automatisch entfernt.
+  Zum manuellen Beenden die Zeile löschen und pushen.
 - `releaseHour`: ab welcher Stunde (Berliner Zeit) das Türchen des Tages erscheint, z. B. `0` oder `18`
 
 ## Hinweise
