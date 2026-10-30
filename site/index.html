@@ -35,6 +35,7 @@
   .head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
   .head h1 { white-space: nowrap; font-size: 1.35rem; margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   .head .date { color: var(--muted); font-size: 0.92rem; white-space: nowrap; }
+  @media (max-width: 480px) { .head .date { display: none; } }
   .chip {
     display: inline-block; vertical-align: 0.15em; margin-left: 8px;
     padding: 2px 9px; border-radius: 999px;
@@ -112,10 +113,10 @@ const DATA = /*DATA*/null;
 const app = document.getElementById('app');
 const pad = n => String(n).padStart(2, '0');
 const src = (d, thumb) => `doors/${pad(d)}${thumb ? '-thumb' : ''}.jpg`;
-const dateLabel = d => new Date(DATA.year, 11, d).toLocaleDateString('de-DE', { weekday: innerWidth < 480 ? 'short' : 'long', day: 'numeric', month: 'long' });
+const dateLabel = d => new Date(DATA.year, 11, d).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
 const icon = dir => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="${dir < 0 ? 'M15 18l-6-6 6-6' : 'M9 18l6-6-6-6'}"/></svg>`;
 
-const banner = DATA?.simulated ? '<div class="test-banner">Testansicht – simuliertes Datum, nicht echt</div>' : '';
+const banner = DATA?.simulated ? '<div class="test-banner">Testansicht (simuliertes Datum)</div>' : '';
 
 if (!DATA || DATA.released < 1) {
   app.innerHTML = banner + `
